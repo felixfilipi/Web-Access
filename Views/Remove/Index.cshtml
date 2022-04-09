@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewBag.Title = "BCA";
+}
+
+@model PagedList.IPagedList<web_form_1.Models.web_access>
+@using PagedList.Mvc;
+
+
+<div class="grid grid-cols-2 bg-gray-300">
+    <button class="flex py-16 border-r-2 hover:bg-gray-400" onclick="@("window.location.href = '" + Url.Action("Index","Home")+"'")">
+        <i class="fa fa-plus fa-2xl m-auto" aria-hidden="true"></i>
+    </button>
+    <button class="flex py-16 hover:bg-gray-400" onclick="@("window.location.href = '" + Url.Action("Index","Remove") + "'")">
+        <i class="fa-solid fa-trash-can fa-2xl m-auto "></i>
+    </button>
+</div>
+
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div class="p-4">
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative mt-1">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                          clip-rule="evenodd"></path>
+                </svg>
+            </div>
+
+            <form id="Search" action="@Url.Action("Search", "Remove")" method="post">
+                <input type="text" id="TABLE_SEARCH" name="TABLE_SEARCH" runat="server" class="bg-gray-50 border border-gray-300 text-gray-900 text- rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search User Id">
+            </form>
+        </div>
+    </div>
+    <table class="w-full text-2xl text-left text-gray-500 dark:text-gray-400 overflow-auto">
+        <thead class="text-2xl text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Kode Laporan
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Nama Laporan
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tanggal Efektif
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    No E-request
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    <span class="sr-only">Delete</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="content">
+            @foreach (var item in Model)
+            {
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                        @item.RPT_CD
+                    </th>
+                    <td class="px-6 py-4">
+                    </td>
+                    <td class="px-6 py-4">
+                        @item.STRT_EFF_DT
+                    </td>
+                    <td class="px-6 py-4">
+                        @item.NO_EREQUEST
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        @using (Html.BeginForm("Delete", "Remove", new
+                        {
+                            RPT_CD = item.RPT_CD,
+                            USER_ID = item.USER_ID
+                        }))
+                        {
+                            <button class="hover:bg-gray-400">
+                                <i class="fa-solid fa-trash-can fa-xl m-auto "></i>
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<div class="py-6">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+</div>

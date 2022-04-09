@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "BCA";
+}
+
+<script>
+
+    function myNewFunction() {
+        let reportName = document.getElementById("REPORT_NAME").value
+        var res;
+        $.ajax({
+            url: '@Url.Action("/GetReportData/Home")',
+            type: 'GET',
+            async: false,
+            dataType: "json",
+            contentType: 'application/json',
+            success: function (result) {
+                res = result;
+            },
+            error: function (xhr, thrownError) {
+                if (xhr.status = 404) {
+                    alert(thrownError);
+                }
+            },
+        });
+
+        function getIndex(reportName) {
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].ReportName === reportName) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        document.getElementById("RPT_CD").value = res[getIndex(reportName)].ReportCode;
+    }
+
+</script>
+
+<div class="grid grid-cols-2 bg-gray-300">
+    <button class="flex py-16 border-r-2 hover:bg-gray-400" onclick="@("window.location.href='" + @Url.Action("Index", "Home") + "'");">
+        <i class="fa fa-plus fa-2xl m-auto" aria-hidden="true"></i>
+    </button>
+    <button class="flex py-16 hover:bg-gray-400" onclick="@("window.location.href='" + @Url.Action("Index", "Remove") + "'");">
+        <i class="fa-solid fa-trash-can fa-2xl m-auto "></i>
+    </button>
+</div>
+
+<form id="Create" action=" @Url.Action("Create", "Home")" method="post">
+    <div class="py-5 px-16">
+        <div class="grid grid-cols-7 py-5 text-4xl pb-10">
+            <label for="REPORT_NAME" class="col-span-3 pb-16 font-sans">Nama Laporan</label>
+            <div>:</div>
+            <div class="col-span-3">
+
+                <input autoComplete="on" list="suggestions" class="form-control" id="REPORT_NAME" name="REPORT_NAME" onchange="myNewFunction()" />
+                <datalist id="suggestions">
+                    @foreach (var item in Model)
+                    {
+                        <option>@item.NAMA_LAPORAN</option>
+;
+                    }
+
+                </datalist>
+            </div>
+
+            <label for="RPT_CD" class="col-span-3 pb-16 font-sans">Kode Laporan</label>
+            <div>:</div>
+            <div class="col-span-3">
+                <input type="text" name="RPT_CD" id="RPT_CD" class=" text-2xl h-14 py-2 px-2 form-control" disabled />
+            </div>
+
+            <label class="col-span-3 pb-16 font-sans">User ID domain</label>
+            <div>:</div>
+            <div class="col-span-2">
+                <input type="text" name="USER_ID" id="USER_ID" class=" text-2xl h-14 py-2 px-2 form-control" />
+            </div>
+            <h1 id="username"></h1>
+
+            <label class="col-span-3 font-sans">No eRequest</label>
+            <div>:</div>
+            <div class="col-span-3">
+                <input type="text" name="NO_EREQUEST" id="NO_EREQUEST" class=" text-2xl h-14 py-2 px-2 form-control" />
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-center">
+        <input type="submit" value="Submit" class="font-sans text-white font-semibold bg-gray-500 hover:bg-gray-600 px-8 py-5 text-3xl rounded-3xl">
+    </div>
+
+    @Html.Raw(TempData["msg"]);
+
+</form>
